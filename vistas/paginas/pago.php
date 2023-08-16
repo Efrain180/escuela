@@ -186,19 +186,72 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
       <div class="content">
         <div class="container-fluid">
+ <?php
+// Asignar un valor a la variable $pago antes de la línea 191
+$pago = 15; // Por ejemplo, aquí le estoy asignando el valor 100
 
-          <div class="row">
-            <div class="col-md-12">
-A
-            </div>
+// Resto de tu código aquí
+
+// Línea 191 donde utilizas la variable $pago
+echo "<h2>El pago es de " . $pago . "</h2>";
+?>
+
+<script src="https://www.paypal.com/sdk/js?client-id=ASOd9M3cj2Qy9nKCuGomPwP1hKN_yRPyy05GrV8_mp98wGRJfMODDowLJ-WU1kb9HgTVtfExBWAJH7QW"></script>
+<div id="paypal-button-container"></div>
+ <script>
+                paypal.Buttons({
+                  style:{
+
+                  },
+
+                  createOrder: function(data, actions){
+                    return actions.order.create({
+                      purchase_units: [{
+                        amount: {
+                          value: <?php echo $pago ?>
+                         }
+                      }]
+                    });
+
+                  },
+
+                  onApprove: function(data, actions) {
+                    let url = '../../controladores/captura.php'
+                    actions.order.capture().then(function(detalles){
+                      window.location.href = "procesado.php";
+
+                      return fetch(url, { 
+                        method: 'POST',
+                        headers: {
+                          'content-type': 'application/json'
+                        },
+
+                        body: JSON.stringify({
+                          detalles: detalles
+                        })
+                      })
 
 
-            <div class="col-md-12">
-B
-            </div>
+                    });
 
-            <!-- /.col -->
-          </div> <!-- /.row -->
+
+                  },
+
+
+
+                  
+                  onCancel: function(data){
+                    alert('Pago Cancelado');
+                    console.log(data);
+                  }
+
+                }).render('#paypal-button-container');
+ </script>
+
+
+
+
+
 
         </div>
       </div>
